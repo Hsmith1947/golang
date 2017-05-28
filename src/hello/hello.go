@@ -16,7 +16,7 @@ func init() {
 func main() {
     http.HandleFunc("/", handler)
     
-    fs := http.FileServer(http.Dir("static"))
+    fs := http.FileServer(http.Dir("../src/hello/static"))
     http.Handle("/static/", http.StripPrefix("/static/", fs))
     
     http.ListenAndServe(":8080", nil)
