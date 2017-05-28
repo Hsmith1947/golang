@@ -3,7 +3,15 @@ package main
 import (
     "html/template"
     "net/http"
+    "hello/stringutil"
 )
+
+var templates map[string]*template.Template
+func init() {
+    templates = make(map[string]*template.Template)
+    templates["hello"] = template.Must(template.ParseFiles("../src/hello/templates/base.html", "../src/hello/templates/hello.html"))
+    templates["test"] = template.Must(template.ParseFiles("../src/hello/templates/base.html", "../src/hello/templates/test.html"))
+}
 
 func main() {
     http.HandleFunc("/", handler)
@@ -15,9 +23,14 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-    name := r.URL.Path[1:]
-    t, _ := template.ParseFiles("templates/base.html", "templates/hello.html")
-    t.Execute(w, map[string]interface{}{
+    name := stringutil.AddPeriod(r.URL.Path[1:])
+
+    if name == "test" {
+        templates["test"].Execute(w, map[string]interface{}{})
+        return
+    }
+
+    templates["hello"].Execute(w, map[string]interface{}{
         "Name": name,
     })
 }
